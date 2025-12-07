@@ -1,8 +1,8 @@
-from typing import List, Optional
+from typing import List, Optional, Tuple, TypeVar
 
-from sqlmodel import Session, select, func
+from sqlmodel import SQLModel, Session, select, func
 
-from models import Rutina, RutinaBase, Ejercicio, EjercicioBase, DiaSemana
+from models import Rutina, RutinaBase, Ejercicio, EjercicioBase
 
 # --- Excepción Personalizada para Manejo de Errores ---
 
@@ -201,3 +201,79 @@ def get_rutina_detail_by_id(session: Session, rutina_id: int) -> Optional[Rutina
 def get_ejercicio_by_id(session: Session, ejercicio_id: int) -> Optional[Ejercicio]:
     """Recupera un ejercicio por su ID."""
     return session.get(Ejercicio, ejercicio_id)
+
+# --- Implmentación de paginación ---
+ModelType = TypeVar("ModelType", bound=SQLModel)
+
+# Paginación y Filtros
+
+def get_rutinas_paginated(
+    session: Session,
+    pagina: int = 1,
+    tamano_pagina: int = 10,
+    dia_semana_filtro: Optional[str] = None
+) -> Tuple[List[Rutina], int]:
+    """
+    Recupera una página de rutinas con el tamaño de página especificado.
+    Devuelve la lista de rutinas y el total de rutinas.
+    """
+    offset = (pagina - 1) * tamano_pagina
+    
+    if dia_semana_filtro:
+        # Filtrar rutinas que tengan al menos un ejercicio en el día especificado
+        subquery = select(Ejercicio.rutina_id).where(
+            Ejercicio.dia_semana == dia_semana_filtro
+            ).distinct()
+        
+        statement = select(Rutina).where(Rutina.id.in_(subquery))
+    else:
+        statement = select(Rutina)
+    
+    # Contar el total de elementos para la paginación
+    count_statement = select(func.count()).select_from(statement.subquery())
+    total_items = session.exec(count_statement).one()
+    
+    # Aplicar LIMIT y OFFSET
+    results = session.exec(
+        statement.offset(offset).limit(tamano_pagina)
+    ).all()
+    
+    return results, total_items
+
+# --- Implementación de Duplicación ---
+
+def duplicate_rutina(session: Session, original_rutina_id: int) -> Optional[Rutina]:
+    """
+    Duplica una rutina existente junto con todos sus ejercicios.
+    Requisito: Crear una copia exacta de una rutina y sus ejercicios.
+    """
+    original = session.get(Rutina, original_rutina_id)
+    if not original:
+        return None
+    
+    # Crear la nueva rutina con el nombre modificado
+    new_rutina_data = original.model_dump(exclude={"id", "fecha_creacion", "ejercicios"})
+    
+    # Creamos un nombre único para la copia
+    copy_count = 1
+    new_name = f"{original.nombre} (Copia {copy_count})"
+    while get_rutina_by_name(session, new_name):
+        copy_count += 1
+        new_name = f"{original.nombre} (Copia {copy_count})"
+
+    new_rutina_data['nombre'] = new_name
+    
+    new_rutina =Rutina(**new_rutina_data)
+    session.add(new_rutina)
+    session.flush()  # Flush para obtener el ID de la nueva rutina
+    
+    # Duplicar los ejercicios asociados
+    for original_ejercicio in original.ejercicios:
+        new_ejercicio_data = original_ejercicio.model_dump(exclude={"id", "rutina_id"})
+        # Asignar la nueva rutina_id para mantener la relación
+        new_ejercicio = Ejercicio(**new_ejercicio_data, rutina_id=new_rutina.id)
+        session.add(new_ejercicio)
+        
+    session.commit()
+    session.refresh(new_rutina)
+    return new_rutina

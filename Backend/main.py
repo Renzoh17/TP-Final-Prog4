@@ -1,7 +1,7 @@
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from database import create_db_and_tables
-from routers import rutinas, ejercicios
+from routers import auth, rutinas, ejercicios
 
 # ----------------------------------------------------
 # Definir el Context Manager de Lifespan
@@ -37,3 +37,4 @@ app = FastAPI(
 # ----------------------------------------------------
 app.include_router(rutinas.router)
 app.include_router(ejercicios.router)
+app.include_router(auth.router)

@@ -1,6 +1,6 @@
 from datetime import datetime
 from enum import Enum
-from typing import Optional, List
+from typing import Generic, Optional, List, TypeVar
 
 from sqlmodel import SQLModel, Field, Relationship
 
@@ -9,10 +9,10 @@ class DiaSemana(str, Enum):
     """Días de la semana válidos para una rutina."""
     LUNES = "Lunes"
     MARTES = "Martes"
-    MIERCOLES = "Miércoles"
+    MIERCOLES = "Miercoles"
     JUEVES = "Jueves"
     VIERNES = "Viernes"
-    SABADO = "Sábado"
+    SABADO = "Sabado"
     DOMINGO = "Domingo"
 
 # --- Modelo de Ejercicio ---
@@ -73,3 +73,46 @@ class RutinaRead(RutinaBase):
 
 # Nota: Se debe definir el `Ejercicio` al final de la clase `Rutina` para evitar errores de referencia circular
 # si se usa la notación de string "Rutina" en la relación de Ejercicio.
+
+# --- Modelo de Paginación Genérico ---
+T = TypeVar("T")
+
+class PaginacionBase(SQLModel, Generic[T]):
+    """Modelo base para paginación de resultados."""
+    items: List[T]
+    total_items: int
+    pagina: int
+    tamano_pagina: int
+    total_paginas: int
+
+# Modelo de respuesta paginada para Rutinas
+class RutinaPaginatedRead(PaginacionBase[Rutina]):
+    """Modelo de respuesta paginada para Rutinas."""
+    pass
+
+# --- Modelos de Usuario ----
+
+class UsuarioBase(SQLModel):
+    """Campos comunes y de entrada para un Usuario."""
+    nombre: str
+    email: str = Field(unique=True, index=True)
+    
+class Usuario(UsuarioBase, table=True):
+    """Modelo de base de datos para un Usuario."""
+    id: Optional[int] = Field(default=None, primary_key=True)
+    hashed_password: str
+    
+# Modelos de Entrada (Peticiones POST)
+class UsuarioCreate(UsuarioBase):
+    """Modelo de creación de Usuario, incluye contraseña plana."""
+    password: str
+    
+# Modelos de Lectura (Respuestas)
+class UsuarioRead(UsuarioBase):
+    """Modelo de respuesta para Usuario, excluye la contraseña."""
+    id: int
+
+class Token(SQLModel):
+    """Modelo para el token de acceso JWT."""
+    access_token: str
+    token_type: str = "bearer" #Tipo de token, por defecto "bearer"

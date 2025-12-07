@@ -56,7 +56,7 @@ def create_db_and_tables():
     que ha importado el motor.
     """
     # Importar los modelos para que SQLModel los reconozca
-    from models import Rutina, Ejercicio, DiaSemana
+    from models import Rutina, Ejercicio, DiaSemana, Usuario
 
     print("Intentando crear la base de datos y las tablas...")
     SQLModel.metadata.create_all(engine)

@@ -1,10 +1,11 @@
 from typing import List
-from fastapi import APIRouter, Depends, HTTPException, status, Query
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlmodel import Session
 
 from database import get_session
 from repository import get_rutina_detail_by_id, add_ejercicio_to_rutina, add_multiple_ejercicios_to_rutina, get_ejercicio_by_id, update_ejercicio, delete_ejercicio_by_id
-from models import Ejercicio, EjercicioBase
+from models import Ejercicio, EjercicioBase, Usuario
+from security import get_current_user
 
 # Definición del Router. Se establece el prefijo y las tags para la documentación (Swagger/Redoc).
 router = APIRouter(
@@ -18,7 +19,8 @@ router = APIRouter(
 def agregar_ejercicio_a_rutina(
     rutina_id: int,
     ejercicio_in: EjercicioBase,
-    session: Session = Depends(get_session)
+    session: Session = Depends(get_session),
+    current_user: Usuario = Depends(get_current_user)
 ):
     """POST /api/rutinas/{id}/ejercicio - Agregar ejercicio a una rutina."""
     rutina = get_rutina_detail_by_id(session, rutina_id)
@@ -33,7 +35,8 @@ def agregar_ejercicio_a_rutina(
 def agregar_ejercicios_a_rutina(
     rutina_id: int,
     ejercicios_in: List[EjercicioBase],
-    session: Session = Depends(get_session)
+    session: Session = Depends(get_session),
+    current_user: Usuario = Depends(get_current_user)
 ):
     """POST /api/rutinas/{id}/ejercicios - Agregar múltiples ejercicios a una rutina."""
     rutina = get_rutina_detail_by_id(session, rutina_id)
@@ -48,7 +51,8 @@ def agregar_ejercicios_a_rutina(
 def actualizar_ejercicio_existente(
     ejercicio_id: int,
     ejercicio_in: EjercicioBase,
-    session: Session = Depends(get_session)
+    session: Session = Depends(get_session),
+    current_user: Usuario = Depends(get_current_user)
 ):
     """PUT /api/ejercicios/{id} - Actualizar un ejercicio."""
     ejercicio = get_ejercicio_by_id(session, ejercicio_id)
@@ -62,7 +66,11 @@ def actualizar_ejercicio_existente(
 
 
 @router.delete("/ejercicios/{ejercicio_id}", status_code=status.HTTP_204_NO_CONTENT)
-def borrar_ejercicio_existente(ejercicio_id: int, session: Session = Depends(get_session)):
+def borrar_ejercicio_existente(
+    ejercicio_id: int,
+    session: Session = Depends(get_session),
+    current_user: Usuario = Depends(get_current_user)
+    ):
     """DELETE /api/ejercicios/{id} - Eliminar un ejercicio."""
     ejercicio = delete_ejercicio_by_id(session, ejercicio_id)
     if not ejercicio:
