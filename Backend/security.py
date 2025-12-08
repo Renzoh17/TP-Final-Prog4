@@ -21,7 +21,7 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 # Clave secreta para firmar los tokens JWT. OBTENER DEL ENTORNO.
 # Si no está definida, usa una clave por defecto, ¡PERO CAMBIA ESTO EN PRODUCCIÓN!
-SECRET_KEY = getenv("SECRET_KEY", "clave-secreta-ultra-secreta")
+SECRET_KEY = getenv("SECRET_KEY")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 # Token expira en 24 horas
 

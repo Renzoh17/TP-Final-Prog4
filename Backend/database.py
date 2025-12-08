@@ -14,7 +14,12 @@ def get_db_url() -> str:
     Intenta construir la URL de conexión a partir de credenciales separadas.
     Si fallan, usa la variable de entorno DATABASE_URL completa.
     """
-    # Opción 1: Credenciales separadas (más seguro en algunos entornos)
+    # Opción 1: URL completa
+    database_url = getenv("DATABASE_URL")
+    if database_url:
+        return database_url
+    
+    # Opción 2: Credenciales separadas (más seguro en algunos entornos)
     db_user = getenv("DB_USER")
     db_pass = getenv("DB_PASS")
     db_host = getenv("DB_HOST")
@@ -28,11 +33,6 @@ def get_db_url() -> str:
         return (
             f"postgresql+psycopg2://{db_user}:{db_pass}@{db_host}:{db_port}/{db_name}"
         )
-
-    # Opción 2: URL completa
-    database_url = getenv("DATABASE_URL")
-    if database_url:
-        return database_url
 
     # Si ninguna de las opciones anteriores está definida, lanzamos un error
     raise ValueError(
