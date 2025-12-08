@@ -135,7 +135,8 @@ Todos los *endpoints* están prefijados con `/api`.
 | `POST` | `/api/rutinas` | Crea una nueva rutina. | **JWT** |
 | `PUT` | `/api/rutinas/{id}` | Actualiza el nombre y descripción de una rutina. | **JWT** |
 | `DELETE`| `/api/rutinas/{id}` | Elimina una rutina y sus ejercicios asociados (cascada). | **JWT** |
-| `POST` | `/api/rutinas/{id}/ejercicios` | Agrega uno o varios ejercicios a una rutina. | **JWT** |
+| `POST` | `/api/rutinas/{id}/ejercicios` | Agrega un ejercicio a una rutina. | **JWT** |
+| `POST` | `/api/rutinas/{id}/ejercicios` | Agrega varios ejercicios a una rutina. | **JWT** |
 | `POST` | `/api/rutinas/{id}/duplicar` | Crea una copia completa de la rutina y sus ejercicios. | **JWT** |
 | `PUT` | `/api/ejercicios/{id}` | Modifica los detalles de un ejercicio específico. | **JWT** |
 | `DELETE`| `/api/ejercicios/{id}` | Elimina un ejercicio específico. | **JWT** |
