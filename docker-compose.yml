@@ -16,6 +16,12 @@ services:
     volumes:
       # Persistencia de datos: asegura que los datos no se pierdan al detener el contenedor
       - postgres_data:/var/lib/postgresql/data/
+    healthcheck: # <-- Nivel de indentación correcto
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
     expose:
       - 5432 # Puerto interno de Postgres
 
@@ -32,8 +38,9 @@ services:
     environment:
       # 🛑 Ajuste clave: URL de conexión a la BDD para el Backend
       - DATABASE_URL=postgresql+psycopg2://postgres:admin@db:5432/gym_db
-    depends_on:
-      - db # Espera a que la base de datos esté lista
+    depends_on: # <-- Dependencia correcta
+      db:
+        condition: service_healthy # Espera el healthcheck exitoso
     
   # ----------------------------------------
   # 3. SERVICIO DEL CLIENTE (FRONTEND)
