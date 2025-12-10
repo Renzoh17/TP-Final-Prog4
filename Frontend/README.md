@@ -84,17 +84,17 @@ El código está organizado de manera modular para facilitar el mantenimiento y 
 
 ```
 Frontend/
-    ├── .env                 # Almacena la URL base de la API.
+    ├── .env                        # Almacena la URL base de la API.
     └── src/
-        ├── api/             # Contiene la logica para la comunicación con la API. 
-        │   └── rutinas.js   # 
-        ├── components/
-        │   ├── EjercicioItem.jsx
-        │   └── SearchBar.jsx
-        ├── pages/           # Componentes que representan las vistas de la app.
-        │   ├── RutinaList.jsx  # Lista de todas las Rutinas.
-        │   ├── RutinaForm.jsx  # Crear/Editar Rutinas.
-        │   ├── RutinaDetail.jsx # Detalle de una Rutina.
+        ├── api/                    # Contiene la logica para la comunicación con la API. 
+        │   └── rutinas.js          # Archivo que hace el llamado a la api.
+        ├── components/             
+        │   ├── EjercicioItem.jsx   # Representa un ejercicio.
+        │   └── SearchBar.jsx       # Barra de navegación.
+        ├── pages/                  # Componentes que representan las vistas de la app.
+        │   ├── RutinaList.jsx      # Lista de todas las Rutinas.
+        │   ├── RutinaForm.jsx      # Crear/Editar Rutinas.
+        │   ├── RutinaDetail.jsx    # Detalle de una Rutina.
         │   ├── LoginPage.jsx       # Página para logearse.
         │   └── RegisterPage.jsx    # Página para registrarse.
         └── App.jsx                 # Define las rutas principales y la estructura del *layout* incluyendo el `AuthWrapper`.
