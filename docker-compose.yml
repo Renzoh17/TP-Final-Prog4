@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+  # ----------------------------------------
+  # 1. SERVICIO DE BASE DE DATOS (POSTGRES)
+  # ----------------------------------------
+  db:
+    image: postgres:15-alpine # Imagen oficial de PostgreSQL (versión ligera)
+    container_name: postgres-db
+    restart: always
+    environment:
+      # 🛑 Credenciales de la Base de Datos
+      - POSTGRES_DB=gym_db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=admin
+    volumes:
+      # Persistencia de datos: asegura que los datos no se pierdan al detener el contenedor
+      - postgres_data:/var/lib/postgresql/data/
+    expose:
+      - 5432 # Puerto interno de Postgres
+
+  # ----------------------------------------
+  # 2. SERVICIO DE LA API (BACKEND)
+  # ----------------------------------------
+  backend:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: fastapi-backend
+    ports:
+      - "8000:8000"
+    environment:
+      # 🛑 Ajuste clave: URL de conexión a la BDD para el Backend
+      - DATABASE_URL=postgresql+psycopg2://postgres:admin@db:5432/gym_db
+    depends_on:
+      - db # Espera a que la base de datos esté lista
+    
+  # ----------------------------------------
+  # 3. SERVICIO DEL CLIENTE (FRONTEND)
+  # ----------------------------------------
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: react-frontend
+    environment:
+      # URL que usa el Frontend para alcanzar el Backend
+      - VITE_API_URL=http://backend:8000/api 
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+
+# ----------------------------------------
+# VOLÚMENES (para persistencia de datos)
+# ----------------------------------------
+volumes:
+  postgres_data:
