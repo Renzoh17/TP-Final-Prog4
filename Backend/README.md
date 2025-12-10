@@ -135,7 +135,7 @@ Todos los *endpoints* están prefijados con `/api`.
 | `POST` | `/api/rutinas` | Crea una nueva rutina. | **JWT** |
 | `PUT` | `/api/rutinas/{id}` | Actualiza el nombre y descripción de una rutina. | **JWT** |
 | `DELETE`| `/api/rutinas/{id}` | Elimina una rutina y sus ejercicios asociados (cascada). | **JWT** |
-| `POST` | `/api/rutinas/{id}/ejercicios` | Agrega un ejercicio a una rutina. | **JWT** |
+| `POST` | `/api/rutinas/{id}/ejercicio` | Agrega un ejercicio a una rutina. | **JWT** |
 | `POST` | `/api/rutinas/{id}/ejercicios` | Agrega varios ejercicios a una rutina. | **JWT** |
 | `POST` | `/api/rutinas/{id}/duplicar` | Crea una copia completa de la rutina y sus ejercicios. | **JWT** |
 | `PUT` | `/api/ejercicios/{id}` | Modifica los detalles de un ejercicio específico. | **JWT** |
@@ -148,16 +148,16 @@ Todos los *endpoints* están prefijados con `/api`.
 El proyecto está organizado en las siguientes carpetas y módulos clave:
 
 ```
-.
-├── .env                  # Variables de entorno
-├── main.py               # Punto de entrada de la aplicación FastAPI y configuración de lifespan.
-├── security.py           # Lógica de JWT, hashing de contraseñas y dependencia de autenticación.
-├── database.py           # Configuración de la conexión SQLModel/PostgreSQL y obtención de sesiones.
-├── models.py             # Definición de los modelos de base de datos (SQLModel) y esquemas Pydantic.
-├── repository.py               # Capa de Repositorio con la lógica de acceso a datos.
-├── requirementsForPy.txt       # Dependencias para que el proyecto funcione.
-└── routers/
-    ├── ejercicios.py     # Endpoints para la gestión de Ejercicios.
-    ├── rutinas.py        # Endpoints para la gestión de Rutinas.
-    └── auth.py           # Endpoints para Registro y Login de Usuarios.
+Backend/
+  ├── .env                  # Variables de entorno
+  ├── main.py               # Punto de entrada de la aplicación FastAPI y configuración de lifespan.
+  ├── security.py           # Lógica de JWT, hashing de contraseñas y dependencia de autenticación.
+  ├── database.py           # Configuración de la conexión SQLModel/PostgreSQL y obtención de sesiones.
+  ├── models.py             # Definición de los modelos de base de datos (SQLModel) y esquemas Pydantic.
+  ├── repository.py               # Capa de Repositorio con la lógica de acceso a datos.
+  ├── requirementsForPy.txt       # Dependencias para que el proyecto funcione.
+  └── routers/
+      ├── ejercicios.py     # Endpoints para la gestión de Ejercicios.
+      ├── rutinas.py        # Endpoints para la gestión de Rutinas.
+      └── auth.py           # Endpoints para Registro y Login de Usuarios.
 ```

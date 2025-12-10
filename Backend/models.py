@@ -69,7 +69,7 @@ class RutinaRead(RutinaBase):
     """Modelo de respuesta para Rutina, incluyendo ID, fecha y ejercicios."""
     id: int
     fecha_creacion: datetime
-    ejercicios: List[EjercicioBase] = []
+    ejercicios: List[Ejercicio] = []
 
 # Nota: Se debe definir el `Ejercicio` al final de la clase `Rutina` para evitar errores de referencia circular
 # si se usa la notación de string "Rutina" en la relación de Ejercicio.

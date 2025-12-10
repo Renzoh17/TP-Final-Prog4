@@ -1,5 +1,6 @@
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from database import create_db_and_tables
 from routers import auth, rutinas, ejercicios
 
@@ -30,6 +31,25 @@ app = FastAPI(
     description="Sistema de gestión de rutinas de gimnasio con FastAPI y SQLModel.",
     version="1.0.0",
     lifespan=lifespan
+)
+
+# ----------------------------------------------------
+# Configuración del Middleware CORS
+# ----------------------------------------------------
+
+# Lista de orígenes (dominios/puertos) que están autorizados a comunicarse con tu API.
+# Usamos el puerto 5173, que es el predeterminado de Vite/React.
+origins = [
+    "http://localhost:5173", # Origen de tu Frontend React
+    "http://127.0.0.1:5173"
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,             # Lista de orígenes permitidos
+    allow_credentials=True,            # Permite cookies y encabezados de autenticación (JWT)
+    allow_methods=["*"],               # Permite todos los métodos (GET, POST, PUT, DELETE, etc.)
+    allow_headers=["*"],               # Permite todos los encabezados HTTP (incluido Authorization)
 )
 
 # ----------------------------------------------------
